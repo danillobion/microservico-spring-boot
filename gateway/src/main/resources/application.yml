@@ -1,0 +1,39 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      routes:
+        - id: blacklist
+          uri: lb://blacklist
+          predicates:
+            - Path=/blacklist/**
+
+        - id: faq
+          uri: lb://faq
+          predicates:
+            - Path=/faq/**
+            
+        - id: eureka-web-start
+          uri: http://localhost:8761
+          predicates:
+            - Path=/eureka/web
+          filters:
+            - SetPath=/
+            
+        - id: eureka-web-other
+          uri: http://localhost:8761
+          predicates:
+            - Path=/eureka/**
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    initialInstanceInfoReplicationIntervalSeconds: 5
+    registryFetchIntervalSeconds: 5
+  instance:
+    leaseRenewalIntervalInSeconds: 5
+    leaseExpirationDurationInSeconds: 5        
